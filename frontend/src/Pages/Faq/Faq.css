@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap');
+
+.fq{--b1:#f8f6ff;--b2:#e2d9ff;--ink:#1b1f4b;--mut:#5d628f;--line:#e0d9f8;--gold:#d6a038;position:relative;overflow:hidden;background:linear-gradient(120deg,var(--b1) 30%,var(--b2));font-family:'Manrope',system-ui,-apple-system,sans-serif;color:var(--ink)}
+.fq *{box-sizing:border-box}
+.fq-glow{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none;animation:fq-dr 14s ease-in-out infinite alternate}
+.fq-glow.g1{width:400px;height:400px;background:#b9a6ff;right:-4%;top:4%;opacity:.4}
+.fq-glow.g2{width:320px;height:320px;background:#9fd0ff;left:-4%;bottom:6%;opacity:.3;animation-delay:-6s}
+@keyframes fq-dr{to{transform:translate(-40px,30px) scale(1.15)}}
+.fq-wrap{position:relative;z-index:2;max-width:960px;margin:0 auto;padding:72px 20px 96px;text-align:center}
+
+.fq:not(.in) .rv{opacity:0}
+.fq:not(.in) .fq-h b{transform:translateY(110%)}
+.fq.in .rv{animation:fq-up .8s cubic-bezier(.2,.9,.2,1) var(--d,0s) both}
+@keyframes fq-up{from{opacity:0;transform:translateY(34px) scale(.97)}}
+
+.fq-pill{display:inline-flex;align-items:center;gap:10px;padding:9px 20px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid #ecd9a8;color:var(--gold);font-weight:800;font-size:12.5px;letter-spacing:.18em}
+.fq-pill i{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:fq-pulse 1.5s infinite}
+@keyframes fq-pulse{50%{transform:scale(1.7);opacity:.35}}
+
+.fq-h{margin:20px 0 44px;font-size:clamp(26px,4.4vw,48px);line-height:1.15;font-weight:800;letter-spacing:-1px}
+.fq-h .w{display:inline-block;clip-path:inset(0 -1em 0 -1em);vertical-align:bottom;padding:0 .08em .12em}
+.fq-h b{display:inline-block;font-weight:inherit}
+.fq.in .fq-h b{animation:fq-word .9s cubic-bezier(.2,.9,.2,1) var(--d) both}
+@keyframes fq-word{from{transform:translateY(110%) rotate(4deg);filter:blur(6px)}}
+
+.fq-list{display:grid;gap:14px;text-align:left}
+.fq-item{position:relative;overflow:hidden;border-radius:30px;background:rgba(255,255,255,.88);border:1px solid var(--line);transition:transform .3s ease,border-color .3s,box-shadow .3s,background .3s,border-radius .3s}
+.fq-item::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--gold),#f0d58a);transform:scaleY(0);transform-origin:top;transition:transform .45s cubic-bezier(.2,.9,.2,1)}
+.fq-item:hover{transform:translateY(-2px);border-color:#c9b9fa;box-shadow:0 14px 26px -18px rgba(91,61,245,.55)}
+.fq-item.open{background:#fff;border-radius:24px;border-color:#e3c98c;box-shadow:0 20px 34px -22px rgba(214,160,56,.75),0 14px 28px -20px rgba(91,61,245,.45)}
+.fq-item.open::before{transform:scaleY(1)}
+
+.fq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 24px;border:0;background:none;color:inherit;font:700 17.5px/1.35 'Manrope',system-ui,sans-serif;text-align:left;cursor:pointer}
+.fq-q:focus-visible{outline:3px solid #6f55e8;outline-offset:-3px;border-radius:inherit}
+.fq-chev{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;transition:transform .45s cubic-bezier(.3,1.7,.5,1),background .3s}
+.fq-chev svg{width:18px;height:18px;fill:none;stroke:#4a4e78;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
+.fq-item:hover .fq-chev{background:#f0eafe}
+.fq-item.open .fq-chev{transform:rotate(180deg);background:#fbf0d4}
+.fq-item.open .fq-chev svg{stroke:var(--gold)}
+.fq.in .fq-item .fq-chev{animation:fq-hint 1.1s ease-in-out 2.4s 1}
+@keyframes fq-hint{40%{transform:translateY(5px)}70%{transform:translateY(-2px)}}
+
+.fq-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s cubic-bezier(.2,.9,.2,1)}
+.fq-item.open .fq-a{grid-template-rows:1fr}
+.fq-a>div{min-height:0;overflow:hidden}
+.fq-a p{margin:0;padding:0 26px 24px 24px;font-size:16px;line-height:1.7;color:var(--mut);font-weight:500;opacity:0;transform:translateY(-10px);transition:opacity .4s ease .12s,transform .45s cubic-bezier(.2,.9,.2,1) .12s}
+.fq-item.open .fq-a p{opacity:1;transform:none}
+
+@media(max-width:600px){.fq-wrap{padding:56px 16px 70px}.fq-q{padding:18px 18px;font-size:16px}.fq-a p{padding:0 20px 20px 18px;font-size:15px}.fq-item{border-radius:24px}}
+@media(prefers-reduced-motion:reduce){.fq *,.fq-glow{animation:none!important;transition:none!important}.fq .rv{opacity:1!important}.fq-h b{transform:none!important}}

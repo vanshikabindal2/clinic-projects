@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@800&display=swap');
+
+.iv{--b1:#f8f6ff;--b2:#e2d9ff;--ink:#1b1f4b;--mut:#6a6d93;--line:#e0d9f8;--gold:#d6a038;position:relative;overflow:hidden;background:linear-gradient(120deg,var(--b1) 30%,var(--b2));font-family:'Manrope',system-ui,-apple-system,sans-serif;color:var(--ink)}
+.iv *{box-sizing:border-box}
+.iv-glow{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none;animation:iv-dr 14s ease-in-out infinite alternate}
+.iv-glow.g1{width:400px;height:400px;background:#b9a6ff;right:-4%;top:6%;opacity:.4}
+.iv-glow.g2{width:320px;height:320px;background:#9fd0ff;left:-4%;bottom:4%;opacity:.3;animation-delay:-6s}
+@keyframes iv-dr{to{transform:translate(-40px,30px) scale(1.15)}}
+.iv-wrap{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:72px 22px 90px;text-align:center}
+
+.iv:not(.in) .rv{opacity:0}
+.iv:not(.in) .iv-h b{transform:translateY(110%)}
+.iv.in .rv{animation:iv-up .8s cubic-bezier(.2,.9,.2,1) var(--d,0s) both}
+@keyframes iv-up{from{opacity:0;transform:translateY(36px) scale(.96)}}
+
+.iv-pill{display:inline-flex;align-items:center;gap:10px;padding:9px 20px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid #ecd9a8;color:var(--gold);font-weight:800;font-size:12.5px;letter-spacing:.18em}
+.iv-pill i{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:iv-pulse 1.5s infinite}
+@keyframes iv-pulse{50%{transform:scale(1.7);opacity:.35}}
+
+.iv-h{margin:20px 0 44px;font-size:clamp(26px,4.2vw,46px);line-height:1.15;font-weight:800;letter-spacing:-1px}
+.iv-h .w{display:inline-block;clip-path:inset(0 -1em 0 -1em);vertical-align:bottom;padding:0 .08em .12em}
+.iv-h b{display:inline-block;font-weight:inherit}
+.iv.in .iv-h b{animation:iv-word .9s cubic-bezier(.2,.9,.2,1) var(--d) both}
+@keyframes iv-word{from{transform:translateY(110%) rotate(4deg);filter:blur(6px)}}
+
+.iv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
+.iv-card{position:relative;overflow:hidden;text-align:left;padding:22px 24px 24px;border-radius:22px;background:rgba(255,255,255,.88);border:1px solid var(--line);transition:transform .3s ease,border-color .3s,box-shadow .3s,background .3s}
+.iv-card::after{content:"";position:absolute;left:0;top:0;height:3px;width:100%;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);transform-origin:left}
+.iv-card.lit{border-color:#e3c98c;background:#fff;transform:translateY(-5px);box-shadow:0 20px 34px -22px rgba(214,160,56,.8),0 14px 30px -20px rgba(91,61,245,.5)}
+.iv-card.lit::after{animation:iv-line 1.2s ease-out forwards}
+@keyframes iv-line{to{transform:scaleX(1)}}
+
+.iv-top{display:flex;justify-content:space-between;align-items:flex-start}
+.iv-stars{display:flex;gap:3px;color:var(--gold);font-size:15px;line-height:1}
+.iv.in .iv-stars span{display:inline-block;animation:iv-star .5s cubic-bezier(.3,1.9,.5,1) var(--s) both}
+@keyframes iv-star{from{opacity:0;transform:scale(0) rotate(-120deg)}}
+.iv-q{font-family:'Playfair Display',Georgia,serif;font-size:46px;line-height:.7;color:#d9d1ef;height:22px;transition:transform .4s cubic-bezier(.3,1.8,.5,1),color .3s}
+.iv.in .iv-q{animation:iv-qin .8s cubic-bezier(.2,.9,.2,1) .9s both}
+@keyframes iv-qin{from{opacity:0;transform:translateY(12px) scale(.5)}}
+.iv-card.lit .iv-q{color:#e6cf9a;transform:scale(1.15) rotate(-6deg)}
+
+.iv-card p{margin:20px 0 20px;padding-bottom:20px;border-bottom:1px solid var(--line);font-size:16px;line-height:1.7;color:#4a4e78;font-weight:500}
+.iv-by{display:flex;align-items:center;gap:14px}
+.iv-av{flex:none;width:44px;height:44px;border-radius:50%;background:#efe8ff;color:#7b4fe0;font-weight:800;font-size:13.5px;display:grid;place-items:center;transition:box-shadow .3s,transform .35s cubic-bezier(.3,1.8,.5,1)}
+.iv-card.lit .iv-av{box-shadow:0 0 0 5px rgba(123,79,224,.14);transform:scale(1.06)}
+.iv-by b{display:block;font-size:15.5px;font-weight:700}
+.iv-by span:not(.iv-av){display:block;margin-top:2px;font-size:13.5px;color:var(--mut);font-weight:500}
+
+@media(max-width:900px){.iv-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.iv-grid{grid-template-columns:1fr}.iv-wrap{padding:56px 16px 64px}}
+@media(prefers-reduced-motion:reduce){.iv *,.iv-glow{animation:none!important;transition:none!important}.iv .rv{opacity:1!important}.iv-h b{transform:none!important}}

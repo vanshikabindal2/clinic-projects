@@ -1,0 +1,656 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap');
+
+.pr{--b1:#f8f6ff;--b2:#e2d9ff;--pri:#5b3df5;--line:#ddd6fb;--gold:#d6a038;--gold2:#e9c368;--ink:#1b1f4b;--mut:#5d628f;position:relative;background:linear-gradient(120deg,var(--b1) 30%,var(--b2));font-family:'Manrope',system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);overflow:hidden}
+.pr *{box-sizing:border-box}
+.pr-glow{position:absolute;right:-8%;top:18%;width:58%;height:90%;background:radial-gradient(60% 55% at 70% 50%,rgba(185,166,255,.55) 0%,rgba(185,166,255,.2) 45%,transparent 72%);pointer-events:none;animation:pr-drift 12s ease-in-out infinite alternate}
+@keyframes pr-drift{to{transform:translate(-5%,-6%) scale(1.12)}}
+
+.pr-r{opacity:0}
+.pr.in .pr-r{animation:pr-in .9s cubic-bezier(.2,.9,.2,1) var(--d,0s) both}
+@keyframes pr-in{from{opacity:0;transform:translateY(34px) scale(.96)}to{opacity:1;transform:none}}
+
+.pr-top{position:relative;z-index:2;max-width:900px;margin:0 auto;padding:56px 20px 56px;text-align:center}
+
+.pr-price{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.pr-mrp{position:relative;font-size:clamp(18px,2.4vw,24px);font-weight:700;color:#8a8aa3}
+.pr-mrp::after{content:"";position:absolute;left:-3px;right:-3px;top:54%;height:2.5px;background:#55556e;transform:scaleX(0);transform-origin:left;border-radius:2px}
+.pr.in .pr-mrp::after{animation:pr-line .6s ease-out .9s forwards}
+@keyframes pr-line{to{transform:scaleX(1)}}
+.pr-now{font-size:clamp(54px,9vw,88px);line-height:1;font-weight:800;letter-spacing:-2px;font-variant-numeric:tabular-nums;background:linear-gradient(100deg,#c98f2a 30%,#f3d98a 50%,#c98f2a 70%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:pr-sh 3.6s 2s linear infinite}
+@keyframes pr-sh{to{background-position:-150% 0}}
+.pr-off{background:#ec1630;color:#fff;font-weight:800;font-size:13px;padding:7px 12px;border-radius:999px;transform-origin:center;animation:pr-wig 4s 2.2s infinite}
+@keyframes pr-wig{0%,88%,100%{transform:none}91%{transform:rotate(-8deg) scale(1.15)}94%{transform:rotate(7deg) scale(1.15)}97%{transform:rotate(-3deg)}}
+
+.pr-sub{margin-top:18px;color:var(--mut);font-size:15px;font-weight:500}
+
+.pr-cta{position:relative;display:inline-block;margin-top:34px}
+.pr-btn{position:relative;overflow:hidden;display:block;min-width:min(86vw,300px);padding:18px 40px 17px;border-radius:20px;background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--ink);text-decoration:none;box-shadow:0 14px 28px -12px rgba(190,135,30,.65),inset 0 1px 0 rgba(255,255,255,.55);transition:transform .2s ease-out,box-shadow .3s;animation:pr-ring 2.6s 2s infinite}
+.pr-btn:hover{box-shadow:0 22px 38px -12px rgba(190,135,30,.8),inset 0 1px 0 rgba(255,255,255,.6)}
+.pr-btn:active{filter:brightness(.96)}
+.pr-btn b{display:block;font-size:21px;font-weight:800;letter-spacing:.2px}
+.pr-btn small{display:block;font-size:13px;font-weight:600;margin-top:3px;opacity:.85}
+.pr-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.7) 50%,transparent 65%);transform:translateX(-130%);animation:pr-shine 3.4s 2.4s infinite}
+@keyframes pr-shine{35%,100%{transform:translateX(130%)}}
+@keyframes pr-ring{0%{box-shadow:0 14px 28px -12px rgba(190,135,30,.65),0 0 0 0 rgba(214,160,56,.5)}70%,100%{box-shadow:0 14px 28px -12px rgba(190,135,30,.65),0 0 0 22px rgba(214,160,56,0)}}
+.pr-rp{position:absolute;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.6);transform:scale(0);animation:pr-rip .7s forwards;pointer-events:none}
+@keyframes pr-rip{to{transform:scale(4);opacity:0}}
+.pr-sp{position:absolute;width:7px;height:7px;border-radius:50%;background:var(--gold2);box-shadow:0 0 10px 3px rgba(233,195,104,.8);opacity:0;animation:pr-tw 2.8s ease-in-out infinite}
+.pr-sp.s1{left:-26px;top:10px}.pr-sp.s2{right:-24px;top:22px;animation-delay:.7s}.pr-sp.s3{left:12%;bottom:-20px;animation-delay:1.4s}.pr-sp.s4{right:14%;top:-18px;animation-delay:2s}
+@keyframes pr-tw{0%,100%{opacity:0;transform:scale(.3) translateY(0)}50%{opacity:1;transform:scale(1.2) translateY(-12px)}}
+
+.pr-chips{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+.pr-chip{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:13.5px;font-weight:700;transition:transform .25s,box-shadow .25s}
+.pr-chip:hover{transform:translateY(-4px);box-shadow:0 10px 20px -10px rgba(70,50,140,.35)}
+.pr-chip i{display:inline-flex;width:16px;height:16px}
+.pr-chip svg{width:16px;height:16px}
+.pr-note{margin-top:22px;font-size:13px;color:var(--mut)}
+.pr-note b{color:var(--ink)}
+
+.pr-strip{position:relative;z-index:2;background:rgba(255,255,255,.6);backdrop-filter:blur(6px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:30px 20px;overflow:hidden}
+.pr-sweep{position:absolute;left:0;top:0;height:2px;width:100%;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:translateX(-100%)}
+.pr.in .pr-sweep{animation:pr-sw 2.4s ease-in-out .8s forwards}
+@keyframes pr-sw{to{transform:translateX(100%)}}
+.pr-grid{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+.pr-item{display:flex;gap:14px;align-items:center}
+.pr-item b{display:block;font-size:15px;font-weight:800}
+.pr-item span:not(.pr-ic){display:block;font-size:13px;color:var(--mut);line-height:1.35;margin-top:3px;font-weight:500}
+.pr-ic{flex:none;width:42px;height:42px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 4px 12px -4px rgba(60,40,130,.3);transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
+.pr-ic svg{width:22px;height:22px}
+.pr-item:hover .pr-ic{transform:translateY(-5px) rotate(-10deg) scale(1.12)}
+
+@media(max-width:900px){.pr-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.pr-grid{grid-template-columns:1fr}.pr-top{padding-top:44px}}
+@media(prefers-reduced-motion:reduce){.pr *,.pr-glow{animation:none!important;transition:none!important}.pr-r{opacity:1}.pr-mrp::after{transform:scaleX(1)}} */
+
+
+
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap');
+
+.pr {
+  --b1: #f8f6ff;
+  --b2: #e2d9ff;
+  --pri: #5b3df5;
+  --line: #ddd6fb;
+  --gold: #d6a038;
+  --gold2: #e9c368;
+  --ink: #1b1f4b;
+  --mut: #5d628f;
+
+  position: relative;
+  background: linear-gradient(120deg, var(--b1) 30%, var(--b2));
+  font-family: 'Manrope', system-ui, -apple-system, Segoe UI, sans-serif;
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.pr * {
+  box-sizing: border-box;
+}
+
+/* Background Glow Animation */
+.pr-glow {
+  position: absolute;
+  right: -8%;
+  top: 18%;
+  width: 58%;
+  height: 90%;
+  background: radial-gradient(
+    60% 55% at 70% 50%,
+    rgba(185, 166, 255, 0.55) 0%,
+    rgba(185, 166, 255, 0.2) 45%,
+    transparent 72%
+  );
+  pointer-events: none;
+  animation: pr-drift 12s ease-in-out infinite alternate;
+}
+
+@keyframes pr-drift {
+  to {
+    transform: translate(-5%, -6%) scale(1.12);
+  }
+}
+
+/* Reveal Animation */
+.pr-r {
+  opacity: 0;
+}
+
+.pr.in .pr-r {
+  animation: pr-in 0.9s cubic-bezier(0.2, 0.9, 0.2, 1) var(--d, 0s) both;
+}
+
+@keyframes pr-in {
+  from {
+    opacity: 0;
+    transform: translateY(34px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Top Section */
+.pr-top {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 56px 20px 56px;
+  text-align: center;
+}
+
+/* Price Section */
+.pr-price {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.pr-mrp {
+  position: relative;
+  font-size: clamp(18px, 2.4vw, 24px);
+  font-weight: 700;
+  color: #8a8aa3;
+}
+
+.pr-mrp::after {
+  content: "";
+  position: absolute;
+  left: -3px;
+  right: -3px;
+  top: 54%;
+  height: 2.5px;
+  background: #55556e;
+  transform: scaleX(0);
+  transform-origin: left;
+  border-radius: 2px;
+}
+
+.pr.in .pr-mrp::after {
+  animation: pr-line 0.6s ease-out 0.9s forwards;
+}
+
+@keyframes pr-line {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Animated Golden Price */
+.pr-now {
+  font-size: clamp(54px, 9vw, 88px);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -2px;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(
+    100deg,
+    #c98f2a 30%,
+    #f3d98a 50%,
+    #c98f2a 70%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: pr-sh 3.6s 2s linear infinite;
+}
+
+@keyframes pr-sh {
+  to {
+    background-position: -150% 0;
+  }
+}
+
+/* Discount Badge */
+.pr-off {
+  background: #ec1630;
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  transform-origin: center;
+  animation: pr-wig 4s 2.2s infinite;
+}
+
+@keyframes pr-wig {
+  0%,
+  88%,
+  100% {
+    transform: none;
+  }
+
+  91% {
+    transform: rotate(-8deg) scale(1.15);
+  }
+
+  94% {
+    transform: rotate(7deg) scale(1.15);
+  }
+
+  97% {
+    transform: rotate(-3deg);
+  }
+}
+
+/* Subtitle */
+.pr-sub {
+  margin-top: 18px;
+  color: var(--mut);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* CTA Button */
+.pr-cta {
+  position: relative;
+  display: inline-block;
+  margin-top: 34px;
+}
+
+.pr-btn {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  min-width: min(86vw, 300px);
+  padding: 18px 40px 17px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, var(--gold2), var(--gold));
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow:
+    0 14px 28px -12px rgba(190, 135, 30, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  transition:
+    transform 0.2s ease-out,
+    box-shadow 0.3s;
+  animation: pr-ring 2.6s 2s infinite;
+}
+
+.pr-btn:hover {
+  box-shadow:
+    0 22px 38px -12px rgba(190, 135, 30, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.pr-btn:active {
+  filter: brightness(0.96);
+}
+
+.pr-btn b {
+  display: block;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.pr-btn small {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 3px;
+  opacity: 0.85;
+}
+
+/* Button Shine Animation */
+.pr-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.7) 50%,
+    transparent 65%
+  );
+  transform: translateX(-130%);
+  animation: pr-shine 3.4s 2.4s infinite;
+}
+
+@keyframes pr-shine {
+  35%,
+  100% {
+    transform: translateX(130%);
+  }
+}
+
+/* Button Ring Animation */
+@keyframes pr-ring {
+  0% {
+    box-shadow:
+      0 14px 28px -12px rgba(190, 135, 30, 0.65),
+      0 0 0 0 rgba(214, 160, 56, 0.5);
+  }
+
+  70%,
+  100% {
+    box-shadow:
+      0 14px 28px -12px rgba(190, 135, 30, 0.65),
+      0 0 0 22px rgba(214, 160, 56, 0);
+  }
+}
+
+/* Ripple Effect */
+.pr-rp {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(0);
+  animation: pr-rip 0.7s forwards;
+  pointer-events: none;
+}
+
+@keyframes pr-rip {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Decorative Sparkles */
+.pr-sp {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold2);
+  box-shadow: 0 0 10px 3px rgba(233, 195, 104, 0.8);
+  opacity: 0;
+  animation: pr-tw 2.8s ease-in-out infinite;
+}
+
+.pr-sp.s1 {
+  left: -26px;
+  top: 10px;
+}
+
+.pr-sp.s2 {
+  right: -24px;
+  top: 22px;
+  animation-delay: 0.7s;
+}
+
+.pr-sp.s3 {
+  left: 12%;
+  bottom: -20px;
+  animation-delay: 1.4s;
+}
+
+.pr-sp.s4 {
+  right: 14%;
+  top: -18px;
+  animation-delay: 2s;
+}
+
+@keyframes pr-tw {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.3) translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2) translateY(-12px);
+  }
+}
+
+/* Feature Chips */
+.pr-chips {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 34px;
+}
+
+.pr-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--line);
+  font-size: 13.5px;
+  font-weight: 700;
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s;
+}
+
+.pr-chip:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px -10px rgba(70, 50, 140, 0.35);
+}
+
+.pr-chip i {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+}
+
+.pr-chip svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Note */
+.pr-note {
+  margin-top: 22px;
+  font-size: 13px;
+  color: var(--mut);
+}
+
+.pr-note b {
+  color: var(--ink);
+}
+
+/* Bottom Feature Strip */
+.pr-strip {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(6px);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 30px 20px;
+  overflow: hidden;
+}
+
+/* Moving Top Border */
+.pr-sweep {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--gold),
+    transparent
+  );
+  transform: translateX(-100%);
+}
+
+.pr.in .pr-sweep {
+  animation: pr-sw 2.4s ease-in-out 0.8s forwards;
+}
+
+@keyframes pr-sw {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Feature Grid */
+.pr-grid {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 26px;
+}
+
+.pr-item {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.pr-item b {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.pr-item span:not(.pr-ic) {
+  display: block;
+  font-size: 13px;
+  color: var(--mut);
+  line-height: 1.35;
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+/* Feature Icons */
+.pr-ic {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 12px -4px rgba(60, 40, 130, 0.3);
+  transition: transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.pr-ic svg {
+  width: 22px;
+  height: 22px;
+}
+
+.pr-item:hover .pr-ic {
+  transform: translateY(-5px) rotate(-10deg) scale(1.12);
+}
+
+/* Tablet Responsive */
+@media (max-width: 900px) {
+  .pr-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 520px) {
+  .pr-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pr-top {
+    padding-top: 44px;
+  }
+}
+
+/* Reduced Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .pr *,
+  .pr-glow {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .pr-r {
+    opacity: 1;
+  }
+
+  .pr-mrp::after {
+    transform: scaleX(1);
+  }
+}
+
+
+
+
+
+/* Festive Season Offer */
+
+.pr-festive-off {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-left: 14px;
+  transform: translateY(-8px);
+}
+
+.pr-festive-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 13px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #ff4057, #d90032);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(225, 0, 48, 0.22);
+  animation: festivePulse 2s ease-in-out infinite;
+}
+
+.pr-off {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: #e50932;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(229, 9, 50, 0.18);
+}
+
+@keyframes festivePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+/* Mobile Responsive */
+
+@media (max-width: 600px) {
+  .pr-festive-off {
+    margin-left: 5px;
+    gap: 4px;
+    transform: translateY(-4px);
+  }
+
+  .pr-festive-label {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .pr-off {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+}
