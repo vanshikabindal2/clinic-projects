@@ -75,7 +75,7 @@ const Checkout = () => {
     try {
       // Create the payment order through the backend
       const response = await fetch(
-        'http://localhost:5000/api/payment/create-order',
+        'https://clinic-projects-woad.vercel.app/api/payment/create-order',
         {
           method: 'POST',
           headers: {
@@ -119,7 +119,7 @@ const Checkout = () => {
         handler: async (paymentResponse) => {
           try {
             const verifyResponse = await fetch(
-              'http://localhost:5000/api/payment/verify',
+              'https://clinic-projects-woad.vercel.app/api/payment/verify',
               {
                 method: 'POST',
                 headers: {
