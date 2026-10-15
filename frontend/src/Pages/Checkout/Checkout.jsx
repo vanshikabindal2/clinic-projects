@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import "./Checkout.css";
 
-const API_URL = "http://localhost:5000";
-
+// const API_URL = "http://localhost:5000";
+const API_URL='https://clinic-projects-woad.vercel.app'
 const MAIN_PRICE = 249;
 
 const COMMUNITY_LINK =
