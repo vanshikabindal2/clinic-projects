@@ -2,12 +2,11 @@
 import React, { useState } from "react";
 import "./Checkout.css";
 
-// const API_URL = "http://localhost:5000";
-const API_URL='https://clinic-projects-woad.vercel.app'
+const API_URL = "https://clinic-projects-woad.vercel.app";
 const MAIN_PRICE = 249;
 
 const COMMUNITY_LINK =
-  "https://chat.whatsapp.com/IiJgO7T7PhbApJ8IwuiWK7";
+  "https://chat.whatsapp.com/DvX2xpXodbLJGS1vq6NFb1";
 
 const ADDONS = [
   {
@@ -17,24 +16,20 @@ const ADDONS = [
     price: 179,
     icon: "🩺",
   },
-
 ];
 
 export default function Checkout() {
-  const [communityJoined, setCommunityJoined] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [selectedAddons, setSelectedAddons] = useState([]);
   const [paying, setPaying] = useState(false);
-  const [downloadReady, setDownloadReady] = useState(false);
-  const [downloadToken, setDownloadToken] = useState("");
-  const [downloading, setDownloading] = useState(false);
+  const [paymentVerified, setPaymentVerified] = useState(false);
+  const [communityJoined, setCommunityJoined] = useState(false);
 
   const addonTotal = ADDONS.reduce(
     (sum, addon) =>
-      sum +
-      (selectedAddons.includes(addon.id) ? addon.price : 0),
+      sum + (selectedAddons.includes(addon.id) ? addon.price : 0),
     0
   );
 
@@ -50,11 +45,6 @@ export default function Checkout() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    if (!communityJoined) {
-      alert("Please join the WhatsApp community first.");
-      return;
-    }
 
     if (!name.trim()) {
       alert("Please enter your full name.");
@@ -142,22 +132,11 @@ export default function Checkout() {
               );
             }
 
-            if (!result.downloadToken) {
-              throw new Error(
-                "Payment was received, but the download token " +
-                "was not returned. Please contact support. " +
-                "Do not pay again."
-              );
-            }
-
-            setDownloadToken(result.downloadToken);
-            setDownloadReady(true);
-
-            alert("Payment verified successfully!");
+            setPaymentVerified(true);
           } catch (error) {
             alert(
               error.message ||
-              "Could not verify payment. Please contact support before retrying."
+                "Payment verification failed. Contact support before retrying."
             );
           } finally {
             setPaying(false);
@@ -173,10 +152,9 @@ export default function Checkout() {
 
       razorpay.on("payment.failed", (failure) => {
         setPaying(false);
-
         alert(
           failure.error?.description ||
-          "Payment failed. Please check your payment status."
+            "Payment failed. Please check your payment status."
         );
       });
 
@@ -187,109 +165,63 @@ export default function Checkout() {
     }
   };
 
-  const downloadPDF = async () => {
-    if (!downloadToken || downloading) return;
-
-    setDownloading(true);
-
-    try {
-      const response = await fetch(
-        `${API_URL}/api/payment/download`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            token: downloadToken,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        const result = await response.json().catch(() => ({}));
-
-        throw new Error(
-          result.message || "Unable to download the PDF."
-        );
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-
-      link.href = url;
-      link.download = "physiotherapy-clinical-casebook.pdf";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      alert(
-        error.message ||
-        "Download failed. Please contact support."
-      );
-    } finally {
-      setDownloading(false);
-    }
-  };
-
-  // Step 1: WhatsApp community
-  if (!communityJoined) {
+  // Step 3: Payment successful — show community option
+  if (paymentVerified) {
     return (
       <main className="checkout-page">
         <div className="checkout-container">
           <section className="checkout-card community-card">
             <div className="checkout-heading">
-              <span className="checkout-tag">ONE QUICK STEP</span>
-              <h1>Join Our Community</h1>
+              <span className="checkout-tag">
+                PAYMENT VERIFIED
+              </span>
+
+              <h1>Payment Successful!</h1>
+
               <p>
-                Join our WhatsApp community before continuing
-                to your BPT Revision E-Book checkout.
+                Thank you, {name}. Your payment has been
+                verified successfully.
               </p>
             </div>
 
             <div className="checkout-notice">
-              <span>📚</span>
+              <span>🎉</span>
               <div>
-                <strong>BPT Revision E-Book</strong>
-                <p>PDF download after verified payment</p>
+                <strong>Your order is confirmed</strong>
+                <p>Total paid: ₹{total.toLocaleString("en-IN")}</p>
               </div>
-              <strong>₹{MAIN_PRICE}</strong>
             </div>
 
-            <a
-              className="checkout-pay-button community-button"
-              href={COMMUNITY_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Join WhatsApp Community
-            </a>
+            {!communityJoined ? (
+              <>
+                <p>
+                Your PDF Is Waiting for You!**** Join our WhatsApp community to receive your
+                PDF. The PDF will be shared in the community.
+                </p>
 
-            <label className="community-confirm">
-              <input
-                type="checkbox"
-                checked={communityJoined}
-                onChange={(event) =>
-                  setCommunityJoined(event.target.checked)
-                }
-              />
-              I've joined the WhatsApp community
-            </label>
+                <a
+                  className="checkout-pay-button community-button"
+                  href={COMMUNITY_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Join WhatsApp Community →
+                </a>
 
-            <button
-              type="button"
-              className="checkout-pay-button"
-              disabled={!communityJoined}
-              onClick={() => setCommunityJoined(true)}
-            >
-              Continue to Checkout →
-            </button>
+                
+              </>
+            ) : (
+              <div className="checkout-notice">
+                <span>✅</span>
+                <div>
+                  <strong>You're all set!</strong>
+                  <p>Thank you for joining our community.</p>
+                </div>
+              </div>
+            )}
 
             <p className="checkout-footer">
-              Community membership is self-confirmed here.
+              Thank you for choosing Medical Notes.
             </p>
           </section>
         </div>
@@ -297,53 +229,10 @@ export default function Checkout() {
     );
   }
 
-  // Step 3: Payment verified, download PDF
-  if (downloadReady) {
-    return (
-      <main className="checkout-page">
-        <div className="checkout-container">
-          <section className="checkout-card">
-            <div className="checkout-heading">
-              <span className="checkout-tag">
-                PAYMENT VERIFIED
-              </span>
-
-              <h1>Your E-Book Is Ready!</h1>
-
-              <p>
-                Your payment has been verified successfully.
-                Download your BPT Revision E-Book below.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              className="checkout-pay-button"
-              onClick={downloadPDF}
-              disabled={downloading}
-            >
-              {downloading
-                ? "PREPARING DOWNLOAD..."
-                : "⬇ Download Your PDF"}
-            </button>
-          </section>
-        </div>
-      </main>
-    );
-  }
-
-  // Step 2: Details and checkout
+  // Step 1 and 2: Form and payment
   return (
     <main className="checkout-page">
       <div className="checkout-container">
-        <button
-          type="button"
-          className="checkout-back"
-          onClick={() => setCommunityJoined(false)}
-        >
-          ← Back to Community
-        </button>
-
         <section className="checkout-card">
           <div className="checkout-heading">
             <span className="checkout-tag">SECURE CHECKOUT</span>
@@ -357,7 +246,7 @@ export default function Checkout() {
             <span>📘</span>
             <div>
               <strong>BPT Revision E-Book</strong>
-              <p>Digital PDF · Instant access after verified payment</p>
+              <p>Digital study resource</p>
             </div>
             <strong>₹{MAIN_PRICE}</strong>
           </div>
