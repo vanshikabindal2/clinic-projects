@@ -3,45 +3,21 @@ import React, { useState } from "react";
 import "./Checkout.css";
 
 const API_URL = "https://clinic-projects-woad.vercel.app";
+
 const MAIN_PRICE = 249;
 
 const COMMUNITY_LINK =
   "https://chat.whatsapp.com/DvX2xpXodbLJGS1vq6NFb1";
 
-const ADDONS = [
-  {
-    id: "clinical",
-    name: "Physiotherapy 111 Clinical Cases Handbook",
-    description: "111 practical clinical cases.",
-    price: 179,
-    icon: "🩺",
-  },
-];
-
 export default function Checkout() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [selectedAddons, setSelectedAddons] = useState([]);
   const [paying, setPaying] = useState(false);
   const [paymentVerified, setPaymentVerified] = useState(false);
-  const [communityJoined, setCommunityJoined] = useState(false);
 
-  const addonTotal = ADDONS.reduce(
-    (sum, addon) =>
-      sum + (selectedAddons.includes(addon.id) ? addon.price : 0),
-    0
-  );
-
-  const total = MAIN_PRICE + addonTotal;
-
-  const toggleAddon = (id) => {
-    setSelectedAddons((previous) =>
-      previous.includes(id)
-        ? previous.filter((item) => item !== id)
-        : [...previous, id]
-    );
-  };
+  // Only the main PDF is included.
+  const total = MAIN_PRICE;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -80,7 +56,7 @@ export default function Checkout() {
             name: name.trim(),
             email: email.trim(),
             phone,
-            addonIds: selectedAddons,
+            addonIds: [],
           }),
         }
       );
@@ -93,12 +69,20 @@ export default function Checkout() {
         );
       }
 
+      // Prevent accidental mismatch between displayed price
+      // and the amount returned by the backend.
+      if (Number(order.amount) !== MAIN_PRICE * 100) {
+        throw new Error(
+          "The payment amount does not match ₹249. Please check the backend pricing."
+        );
+      }
+
       const options = {
         key: order.keyId,
         amount: order.amount,
         currency: order.currency || "INR",
         name: "Medical Notes",
-        description: "BPT Revision E-Book and selected handbooks",
+        description: "BPT Revision E-Book",
         order_id: order.orderId,
 
         prefill: {
@@ -136,7 +120,7 @@ export default function Checkout() {
           } catch (error) {
             alert(
               error.message ||
-                "Payment verification failed. Contact support before retrying."
+                "Payment verification failed. Please contact support before retrying."
             );
           } finally {
             setPaying(false);
@@ -152,6 +136,7 @@ export default function Checkout() {
 
       razorpay.on("payment.failed", (failure) => {
         setPaying(false);
+
         alert(
           failure.error?.description ||
             "Payment failed. Please check your payment status."
@@ -165,7 +150,7 @@ export default function Checkout() {
     }
   };
 
-  // Step 3: Payment successful — show community option
+  // Show confirmation after successful payment verification.
   if (paymentVerified) {
     return (
       <main className="checkout-page">
@@ -186,39 +171,27 @@ export default function Checkout() {
 
             <div className="checkout-notice">
               <span>🎉</span>
+
               <div>
                 <strong>Your order is confirmed</strong>
-                <p>Total paid: ₹{total.toLocaleString("en-IN")}</p>
+                <p>Total paid: ₹{MAIN_PRICE}</p>
               </div>
             </div>
 
-            {!communityJoined ? (
-              <>
-                <p>
-                Your PDF Is Waiting for You!**** Join our WhatsApp community to receive your
-                PDF. The PDF will be shared in the community.
-                </p>
+            <p>
+              Your PDF is waiting for you! Join our WhatsApp
+              community to receive updates about your study
+              resources.
+            </p>
 
-                <a
-                  className="checkout-pay-button community-button"
-                  href={COMMUNITY_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Join WhatsApp Community →
-                </a>
-
-                
-              </>
-            ) : (
-              <div className="checkout-notice">
-                <span>✅</span>
-                <div>
-                  <strong>You're all set!</strong>
-                  <p>Thank you for joining our community.</p>
-                </div>
-              </div>
-            )}
+            <a
+              className="checkout-pay-button community-button"
+              href={COMMUNITY_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Join WhatsApp Community →
+            </a>
 
             <p className="checkout-footer">
               Thank you for choosing Medical Notes.
@@ -229,37 +202,49 @@ export default function Checkout() {
     );
   }
 
-  // Step 1 and 2: Form and payment
+  // Checkout: main PDF only, priced at ₹249.
   return (
     <main className="checkout-page">
       <div className="checkout-container">
         <section className="checkout-card">
           <div className="checkout-heading">
-            <span className="checkout-tag">SECURE CHECKOUT</span>
+            <span className="checkout-tag">
+              SECURE CHECKOUT
+            </span>
+
             <h1>Complete Your Order</h1>
+
             <p>
-              Enter your details and select any optional handbooks.
+              Enter your details to purchase your BPT Revision
+              E-Book.
             </p>
           </div>
 
           <div className="checkout-notice">
             <span>📘</span>
+
             <div>
               <strong>BPT Revision E-Book</strong>
-              <p>Digital study resource</p>
+              <p>Digital study resource · PDF format</p>
             </div>
+
             <strong>₹{MAIN_PRICE}</strong>
           </div>
 
           <form onSubmit={handleSubmit}>
             <div className="checkout-fields">
               <div className="checkout-field">
-                <label htmlFor="checkout-name">Full Name</label>
+                <label htmlFor="checkout-name">
+                  Full Name
+                </label>
+
                 <input
                   id="checkout-name"
                   type="text"
                   value={name}
-                  onChange={(event) => setName(event.target.value)}
+                  onChange={(event) =>
+                    setName(event.target.value)
+                  }
                   placeholder="Enter your full name"
                   autoComplete="name"
                   required
@@ -267,12 +252,17 @@ export default function Checkout() {
               </div>
 
               <div className="checkout-field">
-                <label htmlFor="checkout-email">Email Address</label>
+                <label htmlFor="checkout-email">
+                  Email Address
+                </label>
+
                 <input
                   id="checkout-email"
                   type="email"
                   value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  onChange={(event) =>
+                    setEmail(event.target.value)
+                  }
                   placeholder="Enter your email address"
                   autoComplete="email"
                   required
@@ -280,7 +270,10 @@ export default function Checkout() {
               </div>
 
               <div className="checkout-field">
-                <label htmlFor="checkout-phone">Mobile Number</label>
+                <label htmlFor="checkout-phone">
+                  Mobile Number
+                </label>
+
                 <input
                   id="checkout-phone"
                   type="tel"
@@ -289,7 +282,9 @@ export default function Checkout() {
                   value={phone}
                   onChange={(event) =>
                     setPhone(
-                      event.target.value.replace(/\D/g, "").slice(0, 10)
+                      event.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 10)
                     )
                   }
                   placeholder="10-digit mobile number"
@@ -299,64 +294,17 @@ export default function Checkout() {
               </div>
             </div>
 
-            <div className="checkout-addons">
-              <h2>Complete Your Study Kit</h2>
-              <p>Optional handbooks at a special price</p>
-
-              {ADDONS.map((addon) => {
-                const selected = selectedAddons.includes(addon.id);
-
-                return (
-                  <label
-                    className={`checkout-addon ${
-                      selected ? "selected" : ""
-                    }`}
-                    key={addon.id}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selected}
-                      onChange={() => toggleAddon(addon.id)}
-                    />
-
-                    <span className="checkout-addon-icon">
-                      {addon.icon}
-                    </span>
-
-                    <span className="checkout-addon-info">
-                      <strong>{addon.name}</strong>
-                      <small>{addon.description}</small>
-                    </span>
-
-                    <strong>₹{addon.price}</strong>
-                  </label>
-                );
-              })}
-            </div>
-
             <div className="checkout-summary">
               <h2>Order Summary</h2>
 
               <div className="checkout-summary-row">
                 <span>BPT Revision E-Book</span>
-                <span>₹{MAIN_PRICE}</span>
+                <span>₹249</span>
               </div>
-
-              {ADDONS.filter((addon) =>
-                selectedAddons.includes(addon.id)
-              ).map((addon) => (
-                <div
-                  className="checkout-summary-row"
-                  key={addon.id}
-                >
-                  <span>{addon.name}</span>
-                  <span>₹{addon.price}</span>
-                </div>
-              ))}
 
               <div className="checkout-summary-row checkout-total">
                 <strong>Total Amount</strong>
-                <strong>₹{total.toLocaleString("en-IN")}</strong>
+                <strong>₹249</strong>
               </div>
             </div>
 
@@ -365,9 +313,7 @@ export default function Checkout() {
               className="checkout-pay-button"
               disabled={paying}
             >
-              {paying
-                ? "PROCESSING..."
-                : `PAY SECURELY · ₹${total.toLocaleString("en-IN")}`}
+              {paying ? "PROCESSING..." : "PAY SECURELY · ₹249"}
             </button>
 
             <div className="checkout-security">
@@ -377,7 +323,8 @@ export default function Checkout() {
         </section>
 
         <p className="checkout-footer">
-          © {new Date().getFullYear()} Medical Notes · Secure Checkout
+          © {new Date().getFullYear()} Medical Notes · Secure
+          Checkout
         </p>
       </div>
     </main>
