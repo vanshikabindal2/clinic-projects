@@ -1,12 +1,14 @@
 
 import React, { useEffect, useState } from "react";
 import "./BptPreview.css";
+import b2 from "../../assets/b2.png";
+import b4 from "../../assets/b4.png";
 
 import b from "../../assets/b.png";
-import b2 from "../../assets/b2.png";
+import b3 from "../../assets/b3.png";
 import bac from "../../assets/bac.jpeg";
 
-const slides = [b, b2];
+const slides = [b2,b,b3,b4];
 
 const features = [
   {
