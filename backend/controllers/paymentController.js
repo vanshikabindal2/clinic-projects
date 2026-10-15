@@ -4,8 +4,6 @@ dotenv.config();
 
 import Razorpay from "razorpay";
 import crypto from "crypto";
-import fs from "fs";
-import path from "path";
 
 // Razorpay configuration
 const razorpay = new Razorpay({
@@ -21,33 +19,17 @@ const ADDONS = {
   xray: 179,
 };
 
-// PDF path: backend/private-files/physiotherapy-clinical-casebook.pdf
-const PDF_PATH = path.resolve(
-  process.cwd(),
-  "private-files",
-  "physiotherapy-clinical-casebook.pdf"
-);
-
-console.log("PDF path configured:", PDF_PATH);
-
-try {
-  const stats = fs.statSync(PDF_PATH);
-  console.log("PDF exists:", stats.isFile());
-  console.log("PDF size:", stats.size, "bytes");
-} catch (error) {
-  console.error("PDF file check failed:", error.code, error.message);
-}
-
 // Create Razorpay order
 export const createOrder = async (req, res) => {
   try {
     const { name, email, phone, addonIds = [] } = req.body;
 
+    // Validate customer details
     if (
       typeof name !== "string" ||
       !name.trim() ||
       typeof email !== "string" ||
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
       typeof phone !== "string" ||
       !/^[6-9]\d{9}$/.test(phone)
     ) {
@@ -57,9 +39,14 @@ export const createOrder = async (req, res) => {
       });
     }
 
+    // Validate add-on selection
     if (
       !Array.isArray(addonIds) ||
-      addonIds.some((id) => !Object.hasOwn(ADDONS, id))
+      addonIds.some(
+        (id) =>
+          typeof id !== "string" ||
+          !Object.hasOwn(ADDONS, id)
+      )
     ) {
       return res.status(400).json({
         success: false,
@@ -67,13 +54,18 @@ export const createOrder = async (req, res) => {
       });
     }
 
+    // Remove duplicate add-ons
     const uniqueIds = [...new Set(addonIds)];
 
+    // Calculate amount in paise on the server
     const amount =
       (MAIN_PRICE +
-        uniqueIds.reduce((sum, id) => sum + ADDONS[id], 0)) *
-      100;
+        uniqueIds.reduce(
+          (sum, id) => sum + ADDONS[id],
+          0
+        )) * 100;
 
+    // Create order with Razorpay
     const order = await razorpay.orders.create({
       amount,
       currency: "INR",
@@ -81,10 +73,13 @@ export const createOrder = async (req, res) => {
       notes: {
         product_id: "bpt-revision",
         addon_ids: uniqueIds.join(","),
+        customer_name: name.trim().slice(0, 200),
+        customer_email: email.trim().slice(0, 200),
+        customer_phone: phone,
       },
     });
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       orderId: order.id,
       amount: order.amount,
@@ -101,7 +96,7 @@ export const createOrder = async (req, res) => {
   }
 };
 
-// Verify payment and issue a secure download token
+// Verify Razorpay payment
 export const verifyPayment = async (req, res) => {
   try {
     const {
@@ -110,41 +105,50 @@ export const verifyPayment = async (req, res) => {
       razorpay_signature,
     } = req.body;
 
+    // Validate payment response
     if (
+      typeof razorpay_order_id !== "string" ||
+      typeof razorpay_payment_id !== "string" ||
+      typeof razorpay_signature !== "string" ||
       !razorpay_order_id ||
       !razorpay_payment_id ||
-      !razorpay_signature
+      !/^[a-f0-9]{64}$/i.test(razorpay_signature)
     ) {
       return res.status(400).json({
         success: false,
-        message: "Payment details are missing.",
+        message: "Payment details are missing or invalid.",
       });
     }
 
-    if (!process.env.RAZORPAY_KEY_SECRET) {
-      throw new Error("RAZORPAY_KEY_SECRET is missing.");
+    if (
+      !process.env.RAZORPAY_KEY_ID ||
+      !process.env.RAZORPAY_KEY_SECRET
+    ) {
+      throw new Error("Razorpay environment variables are missing.");
     }
 
     // Verify Razorpay signature
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .createHmac(
+        "sha256",
+        process.env.RAZORPAY_KEY_SECRET
+      )
+      .update(
+        `${razorpay_order_id}|${razorpay_payment_id}`
+      )
       .digest();
 
-    let receivedSignature;
-
-    try {
-      receivedSignature = Buffer.from(razorpay_signature, "hex");
-    } catch {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid payment signature.",
-      });
-    }
+    const receivedSignature = Buffer.from(
+      razorpay_signature,
+      "hex"
+    );
 
     if (
       receivedSignature.length !== expectedSignature.length ||
-      !crypto.timingSafeEqual(receivedSignature, expectedSignature)
+      !crypto.timingSafeEqual(
+        receivedSignature,
+        expectedSignature
+      )
     ) {
       return res.status(400).json({
         success: false,
@@ -152,12 +156,13 @@ export const verifyPayment = async (req, res) => {
       });
     }
 
-    // Confirm order and payment directly with Razorpay
+    // Fetch order and payment directly from Razorpay
     const [order, payment] = await Promise.all([
       razorpay.orders.fetch(razorpay_order_id),
       razorpay.payments.fetch(razorpay_payment_id),
     ]);
 
+    // Confirm this is a valid product order
     if (
       order.id !== razorpay_order_id ||
       order.notes?.product_id !== "bpt-revision"
@@ -168,6 +173,7 @@ export const verifyPayment = async (req, res) => {
       });
     }
 
+    // Validate add-ons stored in the order
     const addonIds = (order.notes?.addon_ids || "")
       .split(",")
       .filter(Boolean);
@@ -182,14 +188,19 @@ export const verifyPayment = async (req, res) => {
       });
     }
 
+    // Calculate the expected amount independently
     const expectedAmount =
       (MAIN_PRICE +
-        addonIds.reduce((sum, id) => sum + ADDONS[id], 0)) *
-      100;
+        addonIds.reduce(
+          (sum, id) => sum + ADDONS[id],
+          0
+        )) * 100;
 
+    // Confirm amount, currency, order and captured status
     if (
       order.amount !== expectedAmount ||
       order.currency !== "INR" ||
+      order.status === "cancelled" ||
       payment.order_id !== order.id ||
       payment.amount !== expectedAmount ||
       payment.currency !== "INR" ||
@@ -201,181 +212,18 @@ export const verifyPayment = async (req, res) => {
       });
     }
 
-    if (!process.env.DOWNLOAD_TOKEN_SECRET) {
-      throw new Error("DOWNLOAD_TOKEN_SECRET is missing.");
-    }
-
-    // Create a token valid for 15 minutes
-    const payload = Buffer.from(
-      JSON.stringify({
-        product: "bpt-revision",
-        orderId: order.id,
-        paymentId: payment.id,
-        exp: Date.now() + 15 * 60 * 1000,
-      })
-    ).toString("base64url");
-
-    const tokenSignature = crypto
-      .createHmac("sha256", process.env.DOWNLOAD_TOKEN_SECRET)
-      .update(payload)
-      .digest("base64url");
-
-    return res.json({
+    // Payment verified — no PDF or download token
+    return res.status(200).json({
       success: true,
+      message: "Payment verified successfully.",
       paymentId: payment.id,
-      downloadToken: `${payload}.${tokenSignature}`,
     });
   } catch (error) {
     console.error("Verify payment error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Could not verify payment.",
+      message: "Could not verify payment. Please contact support.",
     });
-  }
-};
-
-// Download PDF only after payment verification
-export const downloadPdf = async (req, res) => {
-  try {
-    const { token } = req.body;
-
-    if (typeof token !== "string" || !token) {
-      return res.status(401).json({
-        message: "Download token is missing.",
-      });
-    }
-
-    if (!process.env.DOWNLOAD_TOKEN_SECRET) {
-      throw new Error("DOWNLOAD_TOKEN_SECRET is missing.");
-    }
-
-    const parts = token.split(".");
-
-    if (parts.length !== 2) {
-      return res.status(401).json({
-        message: "Invalid download token.",
-      });
-    }
-
-    const [payload, tokenSignature] = parts;
-
-    const expectedSignature = crypto
-      .createHmac("sha256", process.env.DOWNLOAD_TOKEN_SECRET)
-      .update(payload)
-      .digest();
-
-    const receivedSignature = Buffer.from(tokenSignature, "base64url");
-
-    if (
-      receivedSignature.length !== expectedSignature.length ||
-      !crypto.timingSafeEqual(receivedSignature, expectedSignature)
-    ) {
-      return res.status(401).json({
-        message: "Invalid download token signature.",
-      });
-    }
-
-    let data;
-
-    try {
-      data = JSON.parse(
-        Buffer.from(payload, "base64url").toString("utf8")
-      );
-    } catch {
-      return res.status(401).json({
-        message: "Invalid download token payload.",
-      });
-    }
-
-    if (
-      data.product !== "bpt-revision" ||
-      typeof data.orderId !== "string" ||
-      typeof data.paymentId !== "string" ||
-      !Number.isFinite(data.exp) ||
-      data.exp <= Date.now()
-    ) {
-      return res.status(401).json({
-        message: "Download token is invalid or expired.",
-      });
-    }
-
-    // Confirm captured payment again
-    const payment = await razorpay.payments.fetch(data.paymentId);
-
-    if (
-      payment.order_id !== data.orderId ||
-      payment.status !== "captured"
-    ) {
-      return res.status(403).json({
-        message: "A verified captured payment is required.",
-      });
-    }
-
-    // Check the PDF before streaming
-    console.log("Requested PDF path:", PDF_PATH);
-
-    let stats;
-
-    try {
-      stats = fs.statSync(PDF_PATH);
-    } catch (error) {
-      console.error("PDF stat error:", {
-        code: error.code,
-        path: error.path,
-        message: error.message,
-      });
-
-      return res.status(404).json({
-        message: "PDF file not found. Check backend/private-files folder.",
-      });
-    }
-
-    if (!stats.isFile() || stats.size === 0) {
-      return res.status(404).json({
-        message: "PDF is empty or the path is not a file.",
-      });
-    }
-
-    console.log("PDF size:", stats.size, "bytes");
-    console.log("Starting PDF stream...");
-
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      'attachment; filename="Physiotherapy-Clinical-Casebook.pdf"'
-    );
-    res.setHeader("Content-Length", stats.size);
-    res.setHeader("Cache-Control", "no-store");
-
-    const stream = fs.createReadStream(PDF_PATH);
-
-    stream.on("error", (error) => {
-      console.error("PDF stream error:", {
-        code: error.code,
-        path: error.path,
-        message: error.message,
-      });
-
-      if (!res.headersSent) {
-        res.status(500).json({
-          message: "Could not read the PDF file.",
-        });
-      } else {
-        res.destroy(error);
-      }
-    });
-
-    stream.pipe(res);
-  } catch (error) {
-    console.error("Download PDF error:", error);
-
-    if (!res.headersSent) {
-      return res.status(500).json({
-        message: error.message || "Could not download the PDF.",
-      });
-    }
-
-    res.destroy(error);
   }
 };
