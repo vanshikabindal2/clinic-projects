@@ -231,9 +231,9 @@ export default function Home() {
             <div className="px rw f"><div className="ri" /></div>
 
             <div className="px hand"><span>Study<br />Smarter</span></div>
-            <svg className="px arr" viewBox="0 0 80 70" aria-hidden="true">
+            {/* <svg className="px arr" viewBox="0 0 80 70" aria-hidden="true">
               <path pathLength="1" d="M4 6C40 0 72 22 62 62M62 62l-12-12M62 62l10-14" />
-            </svg>
+            </svg> */}
             <div className="px plane">
               <svg viewBox="0 0 60 50" aria-hidden="true"><path d="M3 22L57 3 40 47 29 31zM29 31L57 3" /></svg>
             </div>

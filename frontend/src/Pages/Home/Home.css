@@ -878,3 +878,17 @@ a:focus-visible,button:focus-visible {
   left:-6%;
   top:2%
 }
+@media (max-width: 900px) {
+  .hand {
+    font-size: clamp(16px, 4.6vw, 22px);
+    top: 0;
+    line-height: 1;
+  }
+
+  .arr {
+    left: 30%;
+    top: 10%;
+    width: 8%;
+  }
+}
+
