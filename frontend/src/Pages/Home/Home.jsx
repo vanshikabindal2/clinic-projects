@@ -190,11 +190,11 @@ export default function Home() {
         <div className="L">
           <div className="pill a" style={{ '--d': '.1s' }}><Icon name="book" />Digital PDF E-Book</div>
           <h1>
-            <span className="ln"><span style={{ '--d': '.25s' }}>BPT Complete</span></span>
-            <span className="ln"><span style={{ '--d': '.4s' }}>First Year to Final Year</span></span>
+            <span className="ln"><span style={{ '--d': '.25s' }}>Physiotherapy</span></span>
+            <span className="ln"><span style={{ '--d': '.4s' }}>Clinical Casebook</span></span>
             <span className="ln hl"><span style={{ '--d': '.55s' }}>Revision E-book</span></span>
           </h1>
-          <p className="sub a" style={{ '--d': '.8s' }}>Your Complete Guide for BPT — Smarter Revision, Better Results!</p>
+          <p className="sub a" style={{ '--d': '.8s' }}>Your Complete Guide for Physiotherapy Clinical Casebook — Smarter Revision, Better Results!</p>
 
           <div className="feat">
             {FEATURES.map((f, i) => (

@@ -167,12 +167,6 @@ h1 {
   }
 }
 
-.sub {
-  font-size:19px;
-  color:var(--mut);
-  max-width:25em;
-  line-height:1.55
-}
 
 .feat {
   display:grid;
